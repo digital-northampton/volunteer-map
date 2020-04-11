@@ -10,6 +10,7 @@ const raw_file_path = "data/raw.csv"
 const location_lookup_path = "data/postcode-locations.csv"
 const output_path = "data/voluteer-locations.csv"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
+const batch_size = 5
 
 let postcodeLocations
 let volunteerLocations
@@ -55,10 +56,57 @@ const loadVolunteerPostCodes = () => {
   })
 }
 
-const createLocations = () => {
+const setCoordinatesFromLocal = () => {
   return new Promise ((resolve, reject) => {
-    console.log (postcodeLocations)
-    console.log (volunteerLocations)
+    volunteerLocations.map (vl => {
+      const location = postcodeLocations.find (pcl => vl.postcode == pcl.postcode)
+      
+      if (location !== undefined) {
+        vl.lat = location.lat
+        vl.lng = location.lng
+      }
+
+      return vl  
+    })
+    resolve ()
+  })
+}
+
+const setCoordinatesFromAPI = () => {
+  return new Promise ((resolve, reject) => {
+    const awaitingCoordinates = volunteerLocations
+                                   .filter (l => l.lat == false || l.lng == false)
+    
+    const url = api_url+encodeURI (awaitingCoordinates.slice (0, batch_size).map (c => c.postcode).join (","))
+
+    https.get (url, (resp) => {
+      let data = '';
+
+      resp.on ('data', (chunk) => data += chunk)
+
+      resp.on ('end', () => {
+        if (parser.validate (data) === true) {
+          var jsonObj = parser.parse (data)
+          
+          const newLine = "\n" + jsonObj.kml.Document.Placemark
+                            .map (p => {
+                              return p.name + "," + p.Point.coordinates
+                            })
+                            .join ("\n")
+          
+          fs.appendFileSync (location_lookup_path, newLine);
+        }
+      })
+    }).on ("error", (err) => {
+      console.log("Error: " + err.message)
+    })
+
+    const pc = 100-Math.round (100 * awaitingCoordinates.length / volunteerLocations.length)
+    if (pc == 100) {
+      console.log ("🔥")
+    } else {
+      console.log (pc + "% locations assigned. Run again.")
+    }
 
     resolve ()
   })
@@ -66,35 +114,6 @@ const createLocations = () => {
 
 loadPostCodeLoacations ()
   .then (loadVolunteerPostCodes)
-  .then (createLocations)
-  .then (() => console.log ("🔥"))
+  .then (setCoordinatesFromLocal)
+  .then (setCoordinatesFromAPI)
   .catch (e => console.log (e))
-
-return;
-
-const processCsvFile = data => {
-  const chunked_postcodes = _.chunk (postcodes, 40)
-
-  const url = api_url + encodeURI (chunked_postcodes[0].join (","))
-
-  https.get (url, (resp) => {
-    let data = '';
-
-    resp.on ('data', (chunk) => data += chunk)
-
-    resp.on ('end', () => {
-      if (parser.validate (data) === true) {
-        var jsonObj = parser.parse (data);
-        
-        const newLine = jsonObj.kml.Document.Placemark
-                          .map (p => p.name + "," + p.Point.coordinates)
-                          .join ("\n")
-        
-        fs.appendFileSync (output_file, newLine);
-      }
-    })
-  }).on ("error", (err) => {
-    console.log("Error: " + err.message)
-  })
-}
-
