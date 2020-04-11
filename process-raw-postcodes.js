@@ -3,6 +3,10 @@
 const neatCsv = require ('neat-csv')
 const fs = require ('fs')
 
+const getLatLng = (postcode) => {
+  return {lat:-1,lng:-1}
+}
+
 const processCsvFile = data => {
   const postcodes = data
                       .map (r => r.address_personal_postcode)
@@ -10,8 +14,12 @@ const processCsvFile = data => {
                       .map (r => r.toUpperCase ())
                       .map (r => r.replace(/ /g,''))
                       .map (r => r.slice (0,-3) + " " + r.slice (r.length - 3))
+                      .sort ()
 
-  console.log (postcodes)
+  const locations = postcodes
+                      .map (postcode => Object.assign ({postcode}, getLatLng (postcode)))
+
+  console.log (locations)
 }
 
 
