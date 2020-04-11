@@ -69,6 +69,6 @@ $ (document).ready (function () {
     markerGroup = L.markerClusterGroup().addTo(map);
     circleGroup = L.layerGroup().addTo(map);
 
-    updateMap (false, true, 500)
+    updateMap (true, false, 500)
   })
 })
