@@ -12,7 +12,7 @@ const output_path = "data/voluteer-locations.csv"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
 
 let postcodeLocations
-let volunteerPostCodes
+let volunteerLocations
 
 var output_file = fs.openSync (output_path, 'w');
 
@@ -23,7 +23,7 @@ const loadPostCodeLoacations = () => {
           reject (error);
         } else {
           (async () => {
-            volunteerPostCodes = await neatCsv (data);
+            postcodeLocations = await neatCsv (data);
             resolve ();
           })();
         }
@@ -38,23 +38,35 @@ const loadVolunteerPostCodes = () => {
           reject (error);
         } else {
           (async () => {
-            volunteerPostCodes = await neatCsv (data)
-            volunteerPostCodes = volunteerPostCodes
+            const volunteerPostCodes = await neatCsv (data)
+            volunteerLocations = volunteerPostCodes
                                   .map (r => r.address_personal_postcode)
                                   .filter (r => r != "" && r != undefined)
                                   .map (r => r.toUpperCase ())
                                   .map (r => r.replace(/ /g,''))
                                   .map (r => r.slice (0,-3) + " " + r.slice (r.length - 3))
                                   .sort ()
-            resolve ();
-          })();
+                                  .map (postcode => Object.assign ({postcode}, {lat:false, lng:false}))
+            
+            resolve ()
+          })()
         }
-    });
+    })
+  })
+}
+
+const createLocations = () => {
+  return new Promise ((resolve, reject) => {
+    console.log (postcodeLocations)
+    console.log (volunteerLocations)
+
+    resolve ()
   })
 }
 
 loadPostCodeLoacations ()
   .then (loadVolunteerPostCodes)
+  .then (createLocations)
   .then (() => console.log ("🔥"))
   .catch (e => console.log (e))
 
