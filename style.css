@@ -1,0 +1,33 @@
+
+html, body {
+  margin: 0;
+  padding:0;
+  height: 100%;
+}
+
+html, body, .full, #map{
+  height: 100%;
+}
+
+#map {
+  margin: 0;
+  padding:0;
+  height: 100%;
+}
+
+.controls {
+  position : absolute;
+  top : 0;
+  right : 0;
+  width : 210px;
+  background-color : white;
+  border : 1px solid #CCC;
+  color : black;
+  z-index : 1000;
+  font-family: Arial, Helvetica, sans-serif;
+  padding : 15px;
+}
+
+.controls2 {
+  color : red;
+}
