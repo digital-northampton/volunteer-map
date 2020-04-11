@@ -8,14 +8,12 @@ const parser = require ('fast-xml-parser')
 
 const raw_file_path = "data/raw.csv"
 const location_lookup_path = "data/postcode-locations.csv"
-const output_path = "data/voluteer-locations.csv"
+const output_path = "data/voluteer-locations.json"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
 const batch_size = 40
 
 let postcodeLocations
 let volunteerLocations
-
-var output_file = fs.openSync (output_path, 'w');
 
 const loadPostCodeLoacations = () => {
   return new Promise ((resolve, reject) => {
@@ -103,11 +101,18 @@ const setCoordinatesFromAPI = () => {
 
     const pc = 100-Math.round (100 * awaitingCoordinates.length / volunteerLocations.length)
     if (pc == 100) {
-      console.log ("🔥")
+      resolve ()
     } else {
-      console.log (pc + "% locations assigned. Run again.")
+      reject ("Only" + pc + "% of postcodes have lat/lng. Run again.")
     }
+  })
+}
 
+const outputData = () => {
+  return new Promise ((resolve, reject) => {
+    const output_file = fs.openSync (output_path, 'w');
+    const data = JSON.stringify (volunteerLocations)
+    fs.writeFileSync (output_file, data);
     resolve ()
   })
 }
@@ -116,4 +121,6 @@ loadPostCodeLoacations ()
   .then (loadVolunteerPostCodes)
   .then (setCoordinatesFromLocal)
   .then (setCoordinatesFromAPI)
+  .then (outputData)
+  .then (() => console.log ("🔥"))
   .catch (e => console.log (e))
