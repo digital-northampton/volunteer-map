@@ -9,8 +9,9 @@ A visualisation of where people who have offered help during the COVID19 crisis 
 ```sh
 npm install;
 npx serve;
-# goto http://localhost:5000
 ```
+
+The site will be at `http://localhost:5000/docs/`
 
 ## Deployment
 
