@@ -7,20 +7,62 @@ const _ = require ('underscore')
 const parser = require ('fast-xml-parser')
 
 const raw_file_path = "data/raw.csv"
+const location_lookup_path = "data/postcode-locations.csv"
 const output_path = "data/voluteer-locations.csv"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
-const locations = []
+
+let postcodeLocations
+let volunteerPostCodes
 
 var output_file = fs.openSync (output_path, 'w');
 
+const loadPostCodeLoacations = () => {
+  return new Promise ((resolve, reject) => {
+    fs.readFile (location_lookup_path, (error, data) => {
+        if (error) {
+          reject (error);
+        } else {
+          (async () => {
+            volunteerPostCodes = await neatCsv (data);
+            resolve ();
+          })();
+        }
+    });
+  })
+}
+
+const loadVolunteerPostCodes = () => {
+  return new Promise ((resolve, reject) => {
+    fs.readFile (raw_file_path, (error, data) => {
+        if (error) {
+          reject (error);
+        } else {
+          (async () => {
+            volunteerPostCodes = await neatCsv (data)
+            
+            volunteerPostCodes = volunteerPostCodes
+                                  .map (r => r.address_personal_postcode)
+                                  .filter (r => r != "" && r != undefined)
+                                  .map (r => r.toUpperCase ())
+                                  .map (r => r.replace(/ /g,''))
+                                  .map (r => r.slice (0,-3) + " " + r.slice (r.length - 3))
+                                  .sort ()
+            resolve ();
+          })();
+        }
+    });
+  })
+}
+
+loadPostCodeLoacations ()
+  .then (loadVolunteerPostCodes)
+  .then (() => console.log ("🔥"))
+  .catch (e => console.log (e))
+
+return;
+
 const processCsvFile = data => {
-  const postcodes = data
-                .map (r => r.address_personal_postcode)
-                .filter (r => r != "" && r != undefined)
-                .map (r => r.toUpperCase ())
-                .map (r => r.replace(/ /g,''))
-                .map (r => r.slice (0,-3) + " " + r.slice (r.length - 3))
-                .sort ()
+  
 
   const chunked_postcodes = _.chunk (postcodes, 40)
 
@@ -47,11 +89,3 @@ const processCsvFile = data => {
   })
 }
 
-fs.readFile (raw_file_path, async (err, data) => {
-  if (err) {
-    console.error(err)
-    return
-  }
-  
-  processCsvFile (await neatCsv(data))
-})
