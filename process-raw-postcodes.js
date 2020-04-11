@@ -8,7 +8,7 @@ const parser = require ('fast-xml-parser')
 
 const raw_file_path = "data/raw.csv"
 const location_lookup_path = "data/postcode-locations.csv"
-const output_path = "data/voluteer-locations.json"
+const output_path = "docs/volunteers.json"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
 const batch_size = 40
 
