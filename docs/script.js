@@ -2,12 +2,14 @@
 var dataUrl = "https://digital-northampton.github.io/volunteer-map/volunteers.json"
 var OpenStreetMap_Mapnik
 var map
-var layerGroup;
+var circleGroup;
+var markerGroup;
 var data
 
 var updateMap = function (markers, circles, radius) {
 
-  layerGroup.clearLayers ()
+  markerGroup.clearLayers ()
+  circleGroup.clearLayers ()
 
   var markerCount = 0
 
@@ -15,7 +17,7 @@ var updateMap = function (markers, circles, radius) {
     markerCount++
 
     if (markers === true) {
-      var marker = L.marker ([volunteer.lng, volunteer.lat]).addTo (layerGroup);
+      var marker = L.marker ([volunteer.lng, volunteer.lat]).addTo (markerGroup);
       marker.bindPopup (volunteer.postcode);
     }
 
@@ -23,7 +25,7 @@ var updateMap = function (markers, circles, radius) {
       L.circle (
        [volunteer.lng, volunteer.lat],
        radius,
-       {stroke:false}).addTo (layerGroup);
+       {stroke:false}).addTo (circleGroup);
     }
   });
 
@@ -43,7 +45,6 @@ $ (document).ready (function () {
     var lng = 52.240479
 
     map = L.map('map').setView ([lng, lat], 10)
-    layerGroup = L.layerGroup().addTo(map);
 
     $update.bind ("click", function () {
       updateMap (
@@ -55,6 +56,7 @@ $ (document).ready (function () {
     OpenStreetMap_Mapnik = L.tileLayer (
       'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
       {
+        maxZoom: 18,
         attribution : '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }
     ).addTo (map)
@@ -64,7 +66,9 @@ $ (document).ready (function () {
       .scale ({ maxWidth : 240, metric : true, position : 'bottomleft'})
       .addTo (map)
 
+    markerGroup = L.markerClusterGroup().addTo(map);
+    circleGroup = L.layerGroup().addTo(map);
+
     updateMap (false, true, 500)
   })
-
 })
