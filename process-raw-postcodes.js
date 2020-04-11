@@ -39,7 +39,6 @@ const loadVolunteerPostCodes = () => {
         } else {
           (async () => {
             volunteerPostCodes = await neatCsv (data)
-            
             volunteerPostCodes = volunteerPostCodes
                                   .map (r => r.address_personal_postcode)
                                   .filter (r => r != "" && r != undefined)
@@ -62,8 +61,6 @@ loadPostCodeLoacations ()
 return;
 
 const processCsvFile = data => {
-  
-
   const chunked_postcodes = _.chunk (postcodes, 40)
 
   const url = api_url + encodeURI (chunked_postcodes[0].join (","))
