@@ -16,7 +16,8 @@
     "url": "https://github.com/digital-northampton/volunteer-map/issues"
   },
   "homepage": "https://github.com/digital-northampton/volunteer-map#readme",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "serve": "^11.3.0"
   }
 }
