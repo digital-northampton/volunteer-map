@@ -20,6 +20,8 @@ Commits to the master branch are automatically deployed to Github Pages.
 
 NN postcodes came from [Doogal](https://www.doogal.co.uk/UKPostcodes.php?Search=NN)
 
+note the raw file was supplied in TSV format even though the extension was `.csv`. [Use this](https://onlinetsvtools.com/convert-tsv-to-csv) to convert the data. 
+
 ## Processing Data
 
 ```sh
