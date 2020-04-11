@@ -10,7 +10,7 @@ const raw_file_path = "data/raw.csv"
 const location_lookup_path = "data/postcode-locations.csv"
 const output_path = "data/voluteer-locations.csv"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
-const batch_size = 5
+const batch_size = 40
 
 let postcodeLocations
 let volunteerLocations
