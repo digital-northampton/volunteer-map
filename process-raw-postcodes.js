@@ -6,10 +6,12 @@ const https = require ('https')
 const _ = require ('underscore')
 const parser = require ('fast-xml-parser')
 
+const raw_file_path = "data/raw.csv"
+const output_path = "data/voluteer-locations.csv"
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
 const locations = []
 
-
+var output_file = fs.openSync (output_path, 'w');
 
 const processCsvFile = data => {
   const postcodes = data
@@ -32,7 +34,12 @@ const processCsvFile = data => {
     resp.on ('end', () => {
       if (parser.validate (data) === true) {
         var jsonObj = parser.parse (data);
-        console.log (jsonObj.kml.Document.Placemark)
+        
+        const newLine = jsonObj.kml.Document.Placemark
+                          .map (p => p.name + "," + p.Point.coordinates)
+                          .join ("\n")
+        
+        fs.appendFileSync (output_file, newLine);
       }
     })
   }).on ("error", (err) => {
@@ -40,7 +47,7 @@ const processCsvFile = data => {
   })
 }
 
-fs.readFile('data/raw.csv', async (err, data) => {
+fs.readFile (raw_file_path, async (err, data) => {
   if (err) {
     console.error(err)
     return
