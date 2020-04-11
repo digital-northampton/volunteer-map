@@ -1,0 +1,22 @@
+{
+  "name": "volunteer-map",
+  "version": "1.0.0",
+  "description": "A visualisation of where people who have offered help during the COVID19 crisis are located",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digital-northampton/volunteer-map.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/digital-northampton/volunteer-map/issues"
+  },
+  "homepage": "https://github.com/digital-northampton/volunteer-map#readme",
+  "dependencies": {
+    "serve": "^11.3.0"
+  }
+}
