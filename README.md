@@ -19,3 +19,10 @@ Commits to the master branch are automatically deployed to Github Pages.
 ## Data sources
 
 NN postcodes came from [Doogal](https://www.doogal.co.uk/UKPostcodes.php?Search=NN)
+
+## Processing Data
+
+```sh
+npm install;
+node process-raw-postcodes.js;
+```
