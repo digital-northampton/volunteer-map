@@ -1,5 +1,6 @@
 
 var dataUrl = "https://digital-northampton.github.io/volunteer-map/volunteers.json"
+var borderUrl = "https://digital-northampton.github.io/volunteer-map/county-border.gpx"
 var OpenStreetMap_Mapnik
 var map
 var circleGroup;
@@ -68,6 +69,10 @@ $ (document).ready (function () {
 
     markerGroup = L.markerClusterGroup().addTo(map);
     circleGroup = L.layerGroup().addTo(map);
+
+    new L.GPX (borderUrl, {async: true}).on('loaded', function(e) {
+      map.fitBounds(e.target.getBounds());
+    }).addTo(map)
 
     updateMap (true, false, 500)
   })
