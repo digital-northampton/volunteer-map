@@ -4,10 +4,12 @@ const neatCsv = require ('neat-csv')
 const fs = require ('fs')
 const https = require ('https')
 const _ = require ('underscore')
+const parser = require ('fast-xml-parser')
 
 const api_url = "https://www.doogal.co.uk/MultiplePostcodesKML.ashx?postcodes="
+const locations = []
 
-let locations
+
 
 const processCsvFile = data => {
   const postcodes = data
@@ -18,9 +20,24 @@ const processCsvFile = data => {
                 .map (r => r.slice (0,-3) + " " + r.slice (r.length - 3))
                 .sort ()
 
-  const chunked_postcodes = _.chunk (postcodes, 10)
+  const chunked_postcodes = _.chunk (postcodes, 40)
 
-  console.log (chunked_postcodes[0]) 
+  const url = api_url + encodeURI (chunked_postcodes[0].join (","))
+
+  https.get (url, (resp) => {
+    let data = '';
+
+    resp.on ('data', (chunk) => data += chunk)
+
+    resp.on ('end', () => {
+      if (parser.validate (data) === true) {
+        var jsonObj = parser.parse (data);
+        console.log (jsonObj.kml.Document.Placemark)
+      }
+    })
+  }).on ("error", (err) => {
+    console.log("Error: " + err.message)
+  })
 }
 
 fs.readFile('data/raw.csv', async (err, data) => {
@@ -31,23 +48,3 @@ fs.readFile('data/raw.csv', async (err, data) => {
   
   processCsvFile (await neatCsv(data))
 })
-
-
-// https.get (api_url + "NN1%201SY,NN1%203RP", (resp) => {
-//   let data = '';
-
-//   // A chunk of data has been recieved.
-//   resp.on('data', (chunk) => {
-//     data += chunk;
-//   });
-
-//   // The whole response has been received. Print out the result.
-//   resp.on('end', () => {
-//     console.log(data);
-//   });
-
-// }).on("error", (err) => {
-//   console.log("Error: " + err.message);
-// });
-
-// 
