@@ -12,24 +12,22 @@ var updateMap = function (markers, circles, radius) {
   var markerCount = 0
 
   data.forEach (function (volunteer) {
-    console.log (volunteer)
-
     markerCount++
 
     if (markers === true) {
-      var marker = L.marker ([volunteer.lat, volunteer.lng]).addTo (layerGroup);
+      var marker = L.marker ([volunteer.lng, volunteer.lat]).addTo (layerGroup);
       marker.bindPopup (volunteer.postcode);
     }
 
     if (circles === true) {
       L.circle (
-       [volunteer.lat, volunteer.lng],
+       [volunteer.lng, volunteer.lat],
        radius,
        {stroke:false}).addTo (layerGroup);
     }
   });
 
-  $ (".postcodes-count").html (markerCount)
+  $ (".volunteer-count").html (markerCount)
 }
 
 $ (document).ready (function () {
@@ -41,10 +39,10 @@ $ (document).ready (function () {
     var $radius = $ ("input#radius")
     var $update = $ ("a.update")
 
-    var lat = 52.240479
-    var lng = -0.902656
+    var lat = -0.902656
+    var lng = 52.240479
 
-    map = L.map('map').setView ([lat, lng], 10)
+    map = L.map('map').setView ([lng, lat], 10)
     layerGroup = L.layerGroup().addTo(map);
 
     $update.bind ("click", function () {
