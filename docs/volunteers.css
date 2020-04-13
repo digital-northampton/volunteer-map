@@ -1,3 +1,20 @@
 tr.new-code {
   border-top : 2px solid black;
 }
+
+* {
+  box-sizing: border-box;
+}
+table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100px;
+}
+td.ids {
+  padding: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 150px;
+  color : #CCC;
+}

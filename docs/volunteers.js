@@ -14,7 +14,7 @@ $ (document).ready (function () {
   var addRow = function (volunteer) {
 
     if (volunteer.streets.length == 0) {
-      volunteer.streets.push (" ")
+      volunteer.streets.push ({name:" "})
     }
 
     for (var s = 0; s < volunteer.streets.length; s++) {
@@ -23,10 +23,12 @@ $ (document).ready (function () {
       var url = "volunteer.html?postcode=" + encodeURI (volunteer.postcode)
       var newCode = volunteer.postcode !== last_postcode
       var title = newCode ? volunteer.postcode : ""
+      var ids = volunteer.streets[s].ids == undefined ? "" : volunteer.streets[s].ids.join (", ")
 
       html += "<tr class='"+(newCode?"new-code":"")+"'>"
       html += "<td><strong>"+title+"</strong></td>"
-      html += "<td>"+volunteer.streets [s]+"</td>"
+      html += "<td>"+volunteer.streets [s].name+"</td>"
+      html += "<td class='ids'>"+ids+"</td>"
       html += "</tr>"
 
       $table.find ("tbody").append (html)
