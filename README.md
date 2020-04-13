@@ -11,6 +11,8 @@ npm install;
 npx serve;
 ```
 
+http://localhost:5000/index.html
+
 The site will be at `http://localhost:5000/index.html`
 
 ## Deployment
