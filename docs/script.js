@@ -7,6 +7,10 @@ var circleGroup;
 var markerGroup;
 var data
 
+var numberWithCommas = function (x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 var updateMap = function (markers, circles, radius) {
 
   markerGroup.clearLayers ()
@@ -30,7 +34,7 @@ var updateMap = function (markers, circles, radius) {
     }
   });
 
-  $ (".volunteer-count").html (markerCount)
+  $ (".volunteer-count").html (numberWithCommas (markerCount))
 }
 
 $ (document).ready (function () {
@@ -41,6 +45,9 @@ $ (document).ready (function () {
     var $circle = $ ("input#circle")
     var $radius = $ ("input#radius")
     var $update = $ ("a.update")
+    var $controls = $ (".controls")
+    var $close = $ (".close-controls")
+    var $open = $ (".open-controls")
 
     var lat = -0.902656
     var lng = 52.240479
@@ -75,5 +82,13 @@ $ (document).ready (function () {
     }).addTo(map)
 
     updateMap (true, false, 500)
+
+    $close.bind ("click", function () {
+      $controls.addClass ("hidden")
+    })
+
+    $open.bind ("click", function () {
+      $controls.removeClass ("hidden")
+    })
   })
 })

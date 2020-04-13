@@ -28,6 +28,13 @@ html, body, .full, #map{
   padding : 15px;
 }
 
+.open-controls {
+  position : absolute;
+  top : 16px;
+  right : 16px;
+  z-index : 999;
+}
+
 .controls2 {
   color : red;
 }
