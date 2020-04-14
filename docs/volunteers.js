@@ -12,11 +12,11 @@ var last_postcode
 var addRow = function (volunteer, s) {
   var newCode = volunteer.postcode !== last_postcode
   var html = ""
-  var title = newCode ? volunteer.postcode : ""
+  var color = newCode ? "black" : "white"
   var ids = volunteer.streets[s].ids == undefined ? "" : volunteer.streets[s].ids.join (", ") 
 
   html += "<tr class='"+(newCode?"new-code":"")+"'>"
-  html += "<td><strong>"+title+"</strong></td>"
+  html += "<td><strong style='color:"+color+"'>"+volunteer.postcode+"</strong></td>"
   html += "<td>"+volunteer.streets [s].name+"</td>"
   html += "<td>"+numberWithCommas (volunteer.streets [s].distance)+"</td>"
   html += "<td class='ids'>"+ids+"</td>"
@@ -36,7 +36,6 @@ var numberWithCommas = function (x) {
 
 var updateTable = function () {
   last_postcode = ""
-  $table.find ("tbody").html ("")
   var unassignedVolunteer = {
     postcode : "Out of range",
     streets : []
@@ -64,6 +63,8 @@ var updateTable = function () {
     unassignedVolunteer.streets = unassignedVolunteer.streets.sort((a, b) => (a.name > b.name) ? 1 : -1)
     addRow (unassignedVolunteer, s)
   }
+
+  $ (".loading").addClass ("hidden");
 }
 
 $ (document).ready (function () {
@@ -74,14 +75,15 @@ $ (document).ready (function () {
     data = _data
     updateTable ()
     $ (".hidden").removeClass ("hidden");
-    $ (".loading").addClass ("hidden");
   })
 
   $form.find ("#set-radius").bind ("click", function (e) {
     var new_radius = $form.find ("input#radius").val ()
     if (Number.isInteger (parseInt (new_radius))) {
       radius = new_radius
-      updateTable ()
+      $ (".loading").removeClass ("hidden");
+      $table.find ("tbody").html ("")
+      setTimeout(updateTable,1)
     }
 
     e.preventDefault();
