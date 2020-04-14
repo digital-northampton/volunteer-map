@@ -46,7 +46,8 @@ $ (document).ready (function () {
       addRow (volunteer)
     })
 
-    $ (".loading").hide ();
+    $ (".hidden").removeClass ("hidden");
+    $ (".loading").addClass ("hidden");
   })
 
   $button.bind ("click", function () {
