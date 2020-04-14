@@ -37,7 +37,10 @@ var numberWithCommas = function (x) {
 var updateTable = function () {
   last_postcode = ""
   $table.find ("tbody").html ("")
-  var unassignedStreets = [];
+  var unassignedVolunteer = {
+    postcode : "Out of range",
+    streets : []
+  };
 
   data.forEach (volunteer => {
     if (volunteer.streets.length == 0) {
@@ -50,12 +53,17 @@ var updateTable = function () {
         distance = 0
       }
       if (distance > radius) {
-        //
+        unassignedVolunteer.streets.push (volunteer.streets[s])
       } else {
         addRow (volunteer, s)
       }
     }
   })
+
+  for (var s = 0; s < unassignedVolunteer.streets.length; s++) {
+    unassignedVolunteer.streets = unassignedVolunteer.streets.sort((a, b) => (a.name > b.name) ? 1 : -1)
+    addRow (unassignedVolunteer, s)
+  }
 }
 
 $ (document).ready (function () {
